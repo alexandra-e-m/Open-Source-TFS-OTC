@@ -1,0 +1,111 @@
+For the button three scripts were created in the otclient mods folder
+the first script created of type otmod named "jump.otmd" was the following:
+
+Module
+  name: jump
+  description: Jumping
+  author: Alex
+  website: -
+  version: 1
+
+  autoload: true
+  autoload-priority: 1000
+  sandboxed: true
+  dependencies: [ game_interface ]
+  scripts: [ jump ]
+  @onLoad: init()
+  @onUnload: terminate()
+  
+
+Then a a new folder inside the mods folder, called jump was created and inside it contains 
+an 24x24 icon called "jump_icon"
+Afterwards a script called jump.lua was created, in order to control the button's behaviour
+Unfortunattly i wasnt able to move the button so the function created for that porpouse "jumping()" was left empty
+
+  jumpButton = nil
+  jumpWindow = nil
+
+
+  function init()
+    jumpButton = modules.client_topmenu.addRightToggleButton('jumpButton', tr('jump'), '/Jump/jump/icon_jump', closing)
+    jumpButton:setOn(false)
+
+    jumpWindow = g_ui.displayUI('jump')
+    jumpWindow:setVisible(false)
+
+    --get help values
+    allTabs = jumpWindow:recursiveGetChildById('allTabs')
+    allTabs:setContentWidget(jumpWindow:getChildById('optionsTabContent'))
+
+  end
+
+  function terminate()
+    jumpButton:destroy()
+    jumpWindow:destroy()
+  end
+
+  function closing()
+    if jumpButton:isOn() then
+      jumpWindow:setVisible(false)
+      jumpButton:setOn(false)
+    else
+      jumpWindow:setVisible(true)
+      jumpButton:setOn(true)
+    end
+  end
+
+  function jumping()
+
+    ----
+    
+  end
+
+
+  function onMiniWindowClose()
+    jumpButton:setOn(false)
+
+  end
+
+  Finally a file named "jump.otui" was created which contains the visual aspects of the windows (simalar to css)
+  Here since the jump button doesnt move instead of adding the previously referenced jump fucntion "jumping()" 
+  to the @onclick event of the Jump button as such  @onClick: modules.jump.jumping(), a self destuct mode 
+  was called in order for the button to disapear when the player touches it = @onClick: self:destroy()
+
+  MainWindow
+  id: Jumpmain
+  !text: tr('Jump')
+  size: 300 300
+  @onEscape: modules.jump.closing()
+
+  TabBar
+    id: allTabs
+    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+
+  Panel
+    id: optionsTabContent
+    anchors.top: allTabs.top
+    anchors.left: allTabs.left
+    anchors.right: allTabs.right
+    anchors.bottom: allTabs.bottom
+    margin-top: 20
+    margin-bottom: 20
+
+  Button
+    id: Jump
+    !text: tr('Jump')
+    width: 200
+    anchors.left: parent.left
+    anchors.top: parent.top
+    @onClick: self:destroy()
+
+
+  Button
+    id: closeButton
+    !text: tr('Close')
+    width: 200
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    @onClick: modules.jump.closing()
